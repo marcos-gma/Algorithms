@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// Segmente Tree que retorna o menor valor de um intervalo
+// Segment Tree que retorna a soma de um intervalo
 
 ll values;
 
@@ -23,7 +23,7 @@ void build(ll no, ll l, ll r, vector<ll> &array) {
     build(e, l, mid, array);
     build(d, mid + 1, r, array);
 
-    seg[no] = min(seg[e], seg[d]);
+    seg[no] = seg[e] + seg[d]; 
 }
 
 void updating(ll no, ll l, ll r, ll pos, ll val){
@@ -40,7 +40,7 @@ void updating(ll no, ll l, ll r, ll pos, ll val){
     updating(e,l,mid,pos,val);
     updating(d,mid+1,r,pos,val);
 
-    seg[no] = min(seg[e],seg[d]);
+    seg[no] = seg[e] + seg[d]; 
 }
 
 void update(ll pos, ll val){
@@ -48,47 +48,74 @@ void update(ll pos, ll val){
 }
 
 ll querying(ll no, ll l, ll r, ll lq, ll rq){
-    if (rq < l || r < lq) return LLONG_MAX;
     if (lq <= l && r <= rq) return seg[no];
 
     ll mid = (l + r) / 2;
     ll e = no * 2;
     ll d = e + 1;
+    
+    if (rq <= mid) return querying(e, l, mid, lq, rq);
+    if (lq > mid) return querying(d, mid + 1, r, lq, rq);
 
-    return min(querying(e, l, mid, lq, rq), querying(d, mid + 1, r, lq, rq));
+    return querying(e, l, mid, lq, rq) + querying(d, mid + 1, r, lq, rq);
 }
 
-ll query(ll l, ll r){
-    return querying(1,1,values,l,r);
+bool query(ll l, ll r){
+    ll totalAlcohol = querying(1, 1, values, l, r); 
+    ll totalTime = (r - l + 1);
+    return totalAlcohol > (totalTime * 60) / 2;
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(0);
 
-    ll queries;
+    ll m, queries;
 
-    cin >> values >> queries;
+    cin >> values >> m >> queries;
     ll type, a, b, value;
     
-    seg.resize(4 * values + 1,LLONG_MAX);
+    seg.resize(4 * values + 1,0);
+
+    vector<string> drinks(values + 1);
     
     vector<ll> array(values + 1);
 
     for (ll i = 1; i <= values; i++) {
-        cin >> array[i];
+        cin >> drinks[i];
+    }
+
+    map<string,ll> alcohol;
+
+    for (ll i = 1; i <= m; i++) {
+        string drink;
+        int a;
+        cin >> drink >> a;
+        alcohol[drink] = a;
+    }
+
+    for (ll i = 1; i <= values; i++) {
+        array[i] = alcohol[drinks[i]];
     }
 
     build(1, 1, values, array); 
 
     while (queries--) {
-        ll type, a, b;
-        cin >> type >> a >> b;
+        ll type, a;
+        cin >> type >> a;
 
         if (type == 1) {
-            update(a, b);
+            string b;
+            cin >> b;
+            update(a, alcohol[b]);
         } else {
-            cout << query(a, b) << endl;
+            ll b;
+            cin >> b;
+            if(query(a,b)){
+                cout << "YES" << endl;
+            } else {
+                cout << "NO" << endl;
+            }
         }
     }
 
