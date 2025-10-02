@@ -19,6 +19,8 @@ void join(ll x, ll y){
     rep[x] = y;
 }
 
+// Adicionar ranking
+
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(0);
