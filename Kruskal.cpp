@@ -6,7 +6,7 @@ using namespace std;
 
 vector<ll> rep;
 
-ll find(int x){
+ll find(ll x){
     if(x == rep[x]){
         return x;
     }
