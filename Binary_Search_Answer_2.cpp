@@ -4,17 +4,19 @@
 
 using namespace std;
 
-vector<ll> arrayy;
+int n,k;
+const int mxn = 2e5 + 5;
+ll a[mxn];
 
 
 ll count(ll x){
     ll y = 1;
     ll sum = 0;
-    for(auto a : arrayy){
-        if(sum + a <= x){
-            sum += a;
+    for(int i=0; i < n; i++){
+        if(sum + a[i] <= x){
+            sum += a[i];
         }else{
-            sum = a;
+            sum = a[i];
             y++;
         }
     }
@@ -40,20 +42,16 @@ int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(0);
 
-    ll n,k;
-
     cin >> n >> k;
-
-    arrayy.resize(n);
     
     ll totalSum = 0;
     
     ll maxElement = 0;
 
     for(int i=0; i < n; i++){
-        cin >> arrayy[i];
-        maxElement = max(maxElement,arrayy[i]);
-        totalSum += arrayy[i];
+        cin >> a[i];
+        maxElement = max(maxElement,a[i]);
+        totalSum += a[i];
     }
     
     // l -> se o segmento tiver tamanho 1 a resposta é o maior elemento
